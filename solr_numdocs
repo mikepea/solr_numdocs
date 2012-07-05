@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+
+require "rexml/document"
+require 'net/http'
+require 'uri'
+
+@solr_base_url = ARGV[0]
+@solr_stats_url = "#{@solr_base_url}/admin/luke?numTerms=0"
+
+def open(url)
+  Net::HTTP.get(URI.parse(url))
+end
+
+page_content = open(@solr_stats_url)
+
+doc = REXML::Document.new page_content
+
+#names = REXML::XPath.match( doc, "//@numDocs" )
+names = REXML::XPath.match( doc, "//int[@name='numDocs']" )
+
+names.each do |e|
+    puts e.text
+end
+
